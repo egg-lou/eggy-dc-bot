@@ -5,6 +5,7 @@ import random
 from discord import app_commands
 import json
 import asyncio
+from keep_alive import keep_alive
 from dotenv import load_dotenv
 
 
@@ -15,7 +16,6 @@ intents.members = True
 anowns_counter = "anowns_count.json"
 conf_counter = "conf_count.json"
 ask_counter = "ask_count.json"
-
 load_dotenv()
 
 DC_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
@@ -564,5 +564,11 @@ async def upfile(ctx, content: str = None):
     await asyncio.sleep(2)  # Adjust the delay time as needed
     await ctx.channel.delete_messages([ctx.message, response])
 
+keep_alive()
 
-bot.run(DC_TOKEN)
+try:
+  bot.run(DC_TOKEN)
+except discord.errors.HTTPException:
+  print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
+  os.system('kill 1')
+  os.system("restarter.py")
